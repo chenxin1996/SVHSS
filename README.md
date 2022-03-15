@@ -4,15 +4,13 @@ The code of SVHSS scheme
 In the coding, we chose CLion as IDE. So, you need to run the code in the CLion.
 ## Dependencies
 ### Install m4
+    wget http://mirrors.kernel.org/gnu/m4/m4-1.4.13.tar.gz
+    tar -xzvf m4-1.4.13.tar.gz
+    cd m4-1.4.13
+    ./configure --prefix=/usr/local
+    sudo make
+    sudo make install
 
-'''
-wget http://mirrors.kernel.org/gnu/m4/m4-1.4.13.tar.gz
-tar -xzvf m4-1.4.13.tar.gz
-cd m4-1.4.13
-./configure --prefix=/usr/local
-sudo make
-sudo make install
-'''
 
 安装autoconf
 
