@@ -1,5 +1,5 @@
 # SVHSS
-The code of SVHSS scheme
+The code of SVHSS scheme in the Verifiable Homomorphic Secret Sharing for Low Degree Polynomials paper
 ## IDE
 In the coding, we chose CLion as IDE. So, you need to run the code in the CLion.
 ## Dependencies
