@@ -1,2 +1,2 @@
 # SVHSS
-The implement of SVHSS scheme
+The code of SVHSS scheme
