@@ -3,48 +3,35 @@ void BV_Gen(BV_Para *bvPara, BV_SK *bvSk, BV_PK *bvPk) {
     fmpz_init(bvPara->msg);
     fmpz_init(bvPara->t);
     fmpz_init(bvPara->q);
-
-    //340282366920938463463374607431768211507
-    //18446744073709551629
-    fmpz_set_str(bvPara->msg, "713623846352979940529142984724747568191373381", 10);//64bits
     fmpz_set_str(bvPara->q, "713623846352979940529142984724747568191373381", 10);
-    //fmpz_set_str(bvPara->msg, "1048583", 10);
-//    fmpz_set_str(bvPara->q, "17976931348623159077293051907890247336179769789423065727343008115773267580550096313270847732240753602112011387987139335"
-//                            "76587897688144166224928474306394741243777678934248654852763022196012460941194530829520850057688381506823424628814739131"
-//                            "1054082723716335051068458629823994724593847971630483535632962422413785", 10);
     fmpz_t one;
     fmpz_init(one);
     fmpz_one(one);
-    //fmpz_mul_2exp(bvPara->q,one,2048);
     fmpz_set(bvPara->t,bvPara->q);
+    fmpz_set(bvPara->msg,bvPara->q);
     fmpz_mod_ctx_init(bvPara->ctx_t, bvPara->t);
     fmpz_mod_ctx_init(bvPara->ctx_q, bvPara->q);
     fmpz_mod_ctx_init(bvPara->ctx_msg, bvPara->msg);
     fmpz_mod_poly_init(bvPara->xN, bvPara->ctx_q);
     flint_randinit(bvPara->state);
-
     bvPara->N = 64;
     fmpz_mod_poly_set_coeff_ui(bvPara->xN, bvPara->N, 1, bvPara->ctx_q);
     fmpz_mod_poly_set_coeff_ui(bvPara->xN, 0, 1, bvPara->ctx_q);
-
     //sk
     fmpz_mod_poly_init(bvSk->s, bvPara->ctx_q);
     fmpz_mod_poly_init(bvSk->sqr_s, bvPara->ctx_q);
     fmpz_mod_poly_init(bvSk->cube_s, bvPara->ctx_q);
     GaussRand1(bvSk->s, bvPara->N, bvPara->ctx_q);
-    //SK_Distr(bvSk->s,bvPara->N,bvPara->ctx_q);
     fmpz_mod_poly_mulmod(bvSk->sqr_s, bvSk->s, bvSk->s, bvPara->xN, bvPara->ctx_q);
     fmpz_mod_poly_mulmod(bvSk->cube_s, bvSk->sqr_s, bvSk->s, bvPara->xN, bvPara->ctx_q);
     fmpz_mod_poly_mulmod(bvSk->pow4_s, bvSk->cube_s, bvSk->s, bvPara->xN, bvPara->ctx_q);
     //pk
     fmpz_mod_poly_t e0;
     fmpz_mod_poly_init(e0, bvPara->ctx_q);
-
     fmpz_mod_poly_init(bvPk->a0, bvPara->ctx_q);
     fmpz_mod_poly_init(bvPk->b0, bvPara->ctx_q);
     fmpz_mod_poly_randtest_not_zero(bvPk->a0, bvPara->state, bvPara->N, bvPara->ctx_q);
     GaussRand1(e0, bvPara->N, bvPara->ctx_q);
-
     fmpz_mod_poly_scalar_mul_fmpz(e0, e0, bvPara->t, bvPara->ctx_q);
     fmpz_mod_poly_mulmod(bvPk->b0, bvPk->a0, bvSk->s, bvPara->xN, bvPara->ctx_q);
     fmpz_mod_poly_add(bvPk->b0, bvPk->b0, e0, bvPara->ctx_q);
@@ -59,23 +46,17 @@ void BV_Enc(fmpz_mod_poly_t *c, fmpz_t x, BV_Para *bvPara, BV_PK *bvPk) {
     GaussRand1(v, bvPara->N, bvPara->ctx_q);
     GaussRand1(e1, bvPara->N, bvPara->ctx_q);
     GaussRand2(e2, bvPara->N, bvPara->ctx_q);
-
-    //
     fmpz_mod_poly_t x_bin;
     fmpz_mod_poly_init(x_bin, bvPara->ctx_q);
     fmpz_mod_poly_set_coeff_fmpz(x_bin, 0, x, bvPara->ctx_q);
-
-
     fmpz_mod_poly_mulmod(c[0], bvPk->b0, v, bvPara->xN, bvPara->ctx_q);
     fmpz_mod_poly_scalar_mul_fmpz(temp, e2, bvPara->t, bvPara->ctx_q);
     fmpz_mod_poly_add(c[0], c[0], temp, bvPara->ctx_q);
     fmpz_mod_poly_add(c[0], c[0], x_bin, bvPara->ctx_q);
-
     fmpz_mod_poly_mulmod(c[1], bvPk->a0, v, bvPara->xN, bvPara->ctx_q);
     fmpz_mod_poly_scalar_mul_fmpz(temp, e1, bvPara->t, bvPara->ctx_q);
     fmpz_mod_poly_add(c[1], c[1], temp, bvPara->ctx_q);
     fmpz_mod_poly_neg(c[1],c[1],bvPara->ctx_q);
-
     fmpz_mod_poly_clear(temp, bvPara->ctx_q);
     fmpz_mod_poly_clear(v, bvPara->ctx_q);
     fmpz_mod_poly_clear(e1, bvPara->ctx_q);
